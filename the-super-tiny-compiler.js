@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * TTTTTTTTTTTTTTTTTTTTTTTHHHHHHHHH     HHHHHHHHHEEEEEEEEEEEEEEEEEEEEEE
@@ -77,7 +77,7 @@
 
 /**
  * Today we're going to write a compiler together. But not just any compiler... A
- * super duper teeny tiny compiler! A compiler that is so small that if you
+ * super duper(骗子) teeny(微小的) tiny compiler! A compiler that is so small that if you
  * remove all the comments this file would only be ~200 lines of actual code.
  *
  * We're going to compile some lisp-like function calls into some C-like
@@ -93,11 +93,11 @@
  *   4 - 2          (subtract 4 2)            subtract(4, 2)
  *   2 + (4 - 2)    (add 2 (subtract 4 2))    add(2, subtract(4, 2))
  *
- * Easy peezy right?
+ * Easy peezy(易尿的) right?
  *
  * Well good, because this is exactly what we are going to compile. While this
  * is neither a complete LISP or C syntax, it will be enough of the syntax to
- * demonstrate many of the major pieces of a modern compiler.
+ * demonstrate(证明) many of the major pieces(部分) of a modern compiler.
  */
 
 /**
@@ -107,7 +107,7 @@
  * 1. *Parsing* is taking raw code and turning it into a more abstract
  *    representation of the code.
  *
- * 2. *Transformation* takes this abstract representation and manipulates to do
+ * 2. *Transformation* takes this abstract representation and manipulates(操纵) to do
  *    whatever the compiler wants it to.
  *
  * 3. *Code Generation* takes the transformed representation of the code and
@@ -118,19 +118,19 @@
  * Parsing
  * -------
  *
- * Parsing typically gets broken down into two phases: Lexical Analysis and
+ * Parsing typically gets broken down into two phases(阶段): Lexical Analysis and
  * Syntactic Analysis.
  *
  * 1. *Lexical Analysis* takes the raw code and splits it apart into these things
- *    called tokens by a thing called a tokenizer (or lexer).
+ *    called tokens by a thing called a tokenizer(分词器) (or lexer(词法分析器)).
  *
- *    Tokens are an array of tiny little objects that describe an isolated piece
- *    of the syntax. They could be numbers, labels, punctuation, operators,
+ *    Tokens are an array of tiny little objects that describe an isolated(隔离的) piece
+ *    of the syntax. They could be numbers, labels, punctuation(标点), operators,
  *    whatever.
  *
  * 2. *Syntactic Analysis* takes the tokens and reformats them into a
  *    representation that describes each part of the syntax and their relation
- *    to one another. This is known as an intermediate representation or
+ *    to one another. This is known as an intermediate(中间的) representation or
  *    Abstract Syntax Tree.
  *
  *    An Abstract Syntax Tree, or AST for short, is a deeply nested object that
@@ -144,7 +144,7 @@
  * Tokens might look something like this:
  *
  *   [
- *     { type: 'paren',  value: '('        },
+ *     { type: 'paren'(括号),  value: '('        },
  *     { type: 'name',   value: 'add'      },
  *     { type: 'number', value: '2'        },
  *     { type: 'paren',  value: '('        },
@@ -217,9 +217,9 @@
  * on it.
  *
  * Since we’re targeting a new language, we’re going to focus on creating an
- * entirely new AST that is specific to the target language.
+ * entirely new AST that is specific(具体的) to the target language.
  *
- * Traversal
+ * Traversal(遍历)
  * ---------
  *
  * In order to navigate through all of these nodes, we need to be able to
@@ -328,7 +328,7 @@
  * ---------------
  *
  * The final phase of a compiler is code generation. Sometimes compilers will do
- * things that overlap with transformation, but for the most part code
+ * things that overlap(重叠) with transformation, but for the most part code
  * generation just means take our AST and string-ify code back out.
  *
  * Code generators work several different ways, some compilers will reuse the
@@ -336,8 +336,8 @@
  * the code so that they can print nodes linearly, but from what I can tell most
  * will use the same AST we just created, which is what we’re going to focus on.
  *
- * Effectively our code generator will know how to “print” all of the different
- * node types of the AST, and it will recursively call itself to print nested
+ * Effectively(事实上) our code generator will know how to “print” all of the different
+ * node types of the AST, and it will recursively(递归) call itself to print nested
  * nodes until everything is printed into one long string of code.
  */
 
@@ -379,7 +379,6 @@
 // We start by accepting an input string of code, and we're gonna set up two
 // things...
 function tokenizer(input) {
-
   // A `current` variable for tracking our position in the code like a cursor.
   let current = 0;
 
@@ -392,22 +391,20 @@ function tokenizer(input) {
   // We do this because we may want to increment `current` many times within a
   // single loop because our tokens can be any length.
   while (current < input.length) {
-
     // We're also going to store the `current` character in the `input`.
     let char = input[current];
 
-    // The first thing we want to check for is an open parenthesis. This will
+    // The first thing we want to check for is an open parenthesis(圆括号). This will
     // later be used for `CallExpression` but for now we only care about the
     // character.
     //
     // We check to see if we have an open parenthesis:
-    if (char === '(') {
-
+    if (char === "(") {
       // If we do, we push a new token with the type `paren` and set the value
       // to an open parenthesis.
       tokens.push({
-        type: 'paren',
-        value: '(',
+        type: "paren",
+        value: "(",
       });
 
       // Then we increment `current`
@@ -420,10 +417,10 @@ function tokenizer(input) {
     // Next we're going to check for a closing parenthesis. We do the same exact
     // thing as before: Check for a closing parenthesis, add a new token,
     // increment `current`, and `continue`.
-    if (char === ')') {
+    if (char === ")") {
       tokens.push({
-        type: 'paren',
-        value: ')',
+        type: "paren",
+        value: ")",
       });
       current++;
       continue;
@@ -453,10 +450,9 @@ function tokenizer(input) {
     // So we start this off when we encounter the first number in a sequence.
     let NUMBERS = /[0-9]/;
     if (NUMBERS.test(char)) {
-
       // We're going to create a `value` string that we are going to push
       // characters to.
-      let value = '';
+      let value = "";
 
       // Then we're going to loop through each character in the sequence until
       // we encounter a character that is not a number, pushing each character
@@ -467,7 +463,7 @@ function tokenizer(input) {
       }
 
       // After that we push our `number` token to the `tokens` array.
-      tokens.push({ type: 'number', value });
+      tokens.push({ type: "number", value });
 
       // And we continue on.
       continue;
@@ -482,7 +478,7 @@ function tokenizer(input) {
     // We'll start by checking for the opening quote:
     if (char === '"') {
       // Keep a `value` variable for building up our string token.
-      let value = '';
+      let value = "";
 
       // We'll skip the opening double quote in our token.
       char = input[++current];
@@ -498,7 +494,7 @@ function tokenizer(input) {
       char = input[++current];
 
       // And add our `string` token to the `tokens` array.
-      tokens.push({ type: 'string', value });
+      tokens.push({ type: "string", value });
 
       continue;
     }
@@ -513,7 +509,7 @@ function tokenizer(input) {
     //
     let LETTERS = /[a-z]/i;
     if (LETTERS.test(char)) {
-      let value = '';
+      let value = "";
 
       // Again we're just going to loop through all the letters pushing them to
       // a value.
@@ -523,14 +519,14 @@ function tokenizer(input) {
       }
 
       // And pushing that value as a token with the type `name` and continuing.
-      tokens.push({ type: 'name', value });
+      tokens.push({ type: "name", value });
 
       continue;
     }
 
     // Finally if we have not matched a character by now, we're going to throw
     // an error and completely exit.
-    throw new TypeError('I dont know what this character is: ' + char);
+    throw new TypeError("I dont know what this character is: " + char);
   }
 
   // Then at the end of our `tokenizer` we simply return the tokens array.
@@ -553,14 +549,12 @@ function tokenizer(input) {
 
 // Okay, so we define a `parser` function that accepts our array of `tokens`.
 function parser(tokens) {
-
   // Again we keep a `current` variable that we will use as a cursor.
   let current = 0;
 
   // But this time we're going to use recursion instead of a `while` loop. So we
   // define a `walk` function.
   function walk() {
-
     // Inside the walk function we start by grabbing the `current` token.
     let token = tokens[current];
 
@@ -568,37 +562,32 @@ function parser(tokens) {
     // starting off with `number` tokens.
     //
     // We test to see if we have a `number` token.
-    if (token.type === 'number') {
-
+    if (token.type === "number") {
       // If we have one, we'll increment `current`.
       current++;
 
       // And we'll return a new AST node called `NumberLiteral` and setting its
       // value to the value of our token.
       return {
-        type: 'NumberLiteral',
+        type: "NumberLiteral",
         value: token.value,
       };
     }
 
     // If we have a string we will do the same as number and create a
     // `StringLiteral` node.
-    if (token.type === 'string') {
+    if (token.type === "string") {
       current++;
 
       return {
-        type: 'StringLiteral',
+        type: "StringLiteral",
         value: token.value,
       };
     }
 
     // Next we're going to look for CallExpressions. We start this off when we
     // encounter an open parenthesis.
-    if (
-      token.type === 'paren' &&
-      token.value === '('
-    ) {
-
+    if (token.type === "paren" && token.value === "(") {
       // We'll increment `current` to skip the parenthesis since we don't care
       // about it in our AST.
       token = tokens[++current];
@@ -607,7 +596,7 @@ function parser(tokens) {
       // to set the name as the current token's value since the next token after
       // the open parenthesis is the name of the function.
       let node = {
-        type: 'CallExpression',
+        type: "CallExpression",
         name: token.value,
         params: [],
       };
@@ -650,8 +639,8 @@ function parser(tokens) {
       // token with a `type` of `'paren'` and a `value` of a closing
       // parenthesis.
       while (
-        (token.type !== 'paren') ||
-        (token.type === 'paren' && token.value !== ')')
+        token.type !== "paren" ||
+        (token.type === "paren" && token.value !== ")")
       ) {
         // we'll call the `walk` function which will return a `node` and we'll
         // push it into our `node.params`.
@@ -675,7 +664,7 @@ function parser(tokens) {
   // Now, we're going to create our AST which will have a root which is a
   // `Program` node.
   let ast = {
-    type: 'Program',
+    type: "Program",
     body: [],
   };
 
@@ -706,7 +695,7 @@ function parser(tokens) {
 /**
  * So now we have our AST, and we want to be able to visit different nodes with
  * a visitor. We need to be able to call the methods on the visitor whenever we
- * encounter a node with a matching type.
+ * encounter(遇到) a node with a matching type.
  *
  *   traverse(ast, {
  *     Program: {
@@ -741,11 +730,10 @@ function parser(tokens) {
 // So we define a traverser function which accepts an AST and a
 // visitor. Inside we're going to define two functions...
 function traverser(ast, visitor) {
-
   // A `traverseArray` function that will allow us to iterate over an array and
   // call the next function that we will define: `traverseNode`.
   function traverseArray(array, parent) {
-    array.forEach(child => {
+    array.forEach((child) => {
       traverseNode(child, parent);
     });
   }
@@ -753,7 +741,6 @@ function traverser(ast, visitor) {
   // `traverseNode` will accept a `node` and its `parent` node. So that it can
   // pass both to our visitor methods.
   function traverseNode(node, parent) {
-
     // We start by testing for the existence of a method on the visitor with a
     // matching `type`.
     let methods = visitor[node.type];
@@ -766,29 +753,28 @@ function traverser(ast, visitor) {
 
     // Next we are going to split things up by the current node type.
     switch (node.type) {
-
       // We'll start with our top level `Program`. Since Program nodes have a
       // property named body that has an array of nodes, we will call
       // `traverseArray` to traverse down into them.
       //
       // (Remember that `traverseArray` will in turn call `traverseNode` so  we
       // are causing the tree to be traversed recursively)
-      case 'Program':
+      case "Program":
         traverseArray(node.body, node);
         break;
 
       // Next we do the same with `CallExpression` and traverse their `params`.
-      case 'CallExpression':
+      case "CallExpression":
         traverseArray(node.params, node);
         break;
 
       // In the cases of `NumberLiteral` and `StringLiteral` we don't have any
       // child nodes to visit, so we'll just break.
-      case 'NumberLiteral':
-      case 'StringLiteral':
+      case "NumberLiteral":
+      case "StringLiteral":
         break;
 
-      // And again, if we haven't recognized the node type then we'll throw an
+      // And again, if we haven't recognized(辨别) the node type then we'll throw an
       // error.
       default:
         throw new TypeError(node.type);
@@ -856,11 +842,10 @@ function traverser(ast, visitor) {
 
 // So we have our transformer function which will accept the lisp ast.
 function transformer(ast) {
-
   // We'll create a `newAst` which like our previous AST will have a program
   // node.
   let newAst = {
-    type: 'Program',
+    type: "Program",
     body: [],
   };
 
@@ -875,7 +860,6 @@ function transformer(ast) {
 
   // We'll start by calling the traverser function with our ast and a visitor.
   traverser(ast, {
-
     // The first visitor method accepts any `NumberLiteral`
     NumberLiteral: {
       // We'll visit them on enter.
@@ -883,7 +867,7 @@ function transformer(ast) {
         // We'll create a new node also named `NumberLiteral` that we will push to
         // the parent context.
         parent._context.push({
-          type: 'NumberLiteral',
+          type: "NumberLiteral",
           value: node.value,
         });
       },
@@ -893,7 +877,7 @@ function transformer(ast) {
     StringLiteral: {
       enter(node, parent) {
         parent._context.push({
-          type: 'StringLiteral',
+          type: "StringLiteral",
           value: node.value,
         });
       },
@@ -902,13 +886,12 @@ function transformer(ast) {
     // Next up, `CallExpression`.
     CallExpression: {
       enter(node, parent) {
-
         // We start creating a new node `CallExpression` with a nested
         // `Identifier`.
         let expression = {
-          type: 'CallExpression',
+          type: "CallExpression",
           callee: {
-            type: 'Identifier',
+            type: "Identifier",
             name: node.name,
           },
           arguments: [],
@@ -921,13 +904,12 @@ function transformer(ast) {
 
         // Then we're going to check if the parent node is a `CallExpression`.
         // If it is not...
-        if (parent.type !== 'CallExpression') {
-
+        if (parent.type !== "CallExpression") {
           // We're going to wrap our `CallExpression` node with an
           // `ExpressionStatement`. We do this because the top level
           // `CallExpression` in JavaScript are actually statements.
           expression = {
-            type: 'ExpressionStatement',
+            type: "ExpressionStatement",
             expression: expression,
           };
         }
@@ -936,7 +918,7 @@ function transformer(ast) {
         // `context`.
         parent._context.push(expression);
       },
-    }
+    },
   });
 
   // At the end of our transformer function we'll return the new ast that we
@@ -955,51 +937,46 @@ function transformer(ast) {
  * Now let's move onto our last phase: The Code Generator.
  *
  * Our code generator is going to recursively call itself to print each node in
- * the tree into one giant string.
+ * the tree into one giant(巨大的) string.
  */
 
 function codeGenerator(node) {
-
   // We'll break things down by the `type` of the `node`.
   switch (node.type) {
-
     // If we have a `Program` node. We will map through each node in the `body`
     // and run them through the code generator and join them with a newline.
-    case 'Program':
-      return node.body.map(codeGenerator)
-        .join('\n');
+    case "Program":
+      return node.body.map(codeGenerator).join("\n");
 
     // For `ExpressionStatement` we'll call the code generator on the nested
     // expression and we'll add a semicolon...
-    case 'ExpressionStatement':
+    case "ExpressionStatement":
       return (
-        codeGenerator(node.expression) +
-        ';' // << (...because we like to code the *correct* way)
+        codeGenerator(node.expression) + ";" // << (...because we like to code the *correct* way)
       );
 
     // For `CallExpression` we will print the `callee`, add an open
-    // parenthesis, we'll map through each node in the `arguments` array and run
+    // parenthesis(圆括号), we'll map through each node in the `arguments` array and run
     // them through the code generator, joining them with a comma, and then
     // we'll add a closing parenthesis.
-    case 'CallExpression':
+    case "CallExpression":
       return (
         codeGenerator(node.callee) +
-        '(' +
-        node.arguments.map(codeGenerator)
-          .join(', ') +
-        ')'
+        "(" +
+        node.arguments.map(codeGenerator).join(", ") +
+        ")"
       );
 
     // For `Identifier` we'll just return the `node`'s name.
-    case 'Identifier':
+    case "Identifier":
       return node.name;
 
     // For `NumberLiteral` we'll just return the `node`'s value.
-    case 'NumberLiteral':
+    case "NumberLiteral":
       return node.value;
 
     // For `StringLiteral` we'll add quotations around the `node`'s value.
-    case 'StringLiteral':
+    case "StringLiteral":
       return '"' + node.value + '"';
 
     // And if we haven't recognized the node, we'll throw an error.
@@ -1027,7 +1004,7 @@ function codeGenerator(node) {
 
 function compiler(input) {
   let tokens = tokenizer(input);
-  let ast    = parser(tokens);
+  let ast = parser(tokens);
   let newAst = transformer(ast);
   let output = codeGenerator(newAst);
 
